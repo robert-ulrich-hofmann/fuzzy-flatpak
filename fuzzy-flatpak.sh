@@ -18,17 +18,17 @@
 # get to know find command and options, explain in readme?
 
 
-if !flatpak
-echo dependency
-exit
+#if !flatpak
+#echo dependency
+#exit
 
-if !$1
-no command
-exit
+#if !$1
+#no command
+#exit
 
-if $3
-too many arguments
-exit
+#if $3
+#too many arguments
+#exit
 
 # todo optional step verify and enter / abort before actual commands?
 #if allowed command
