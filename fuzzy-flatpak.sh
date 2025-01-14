@@ -22,11 +22,12 @@
 # get to know find command and options, explain in readme?
 
 LAST_FINDING=""
+fuzzyFlatpakCommands=("help" "info" "run" "kill")
 
 # TODO guard this against no input outside
 # TODO stateless, handle LAST_FINDING only outside if you want debug
 # TODO always return result or exit
-fuzzy-find()
+fuzzyFind()
 {
     RESULT="" # todo debug scope of this, is this outside after execution?
 
@@ -53,14 +54,16 @@ fuzzy-find()
     return $RESULT #TODO empty?
 }
 
-check-application-running()
+checkApplicationRunning()
 {
+    echo "check"
     # compare flatpak ps and $1
     # return true / false
 }
 
-get-running-processes()
+getRunningProcesses()
 {
+    echo "get"
     # get all running processes as names
     # return array
 }
@@ -94,6 +97,30 @@ then
 fi
 
 #if allowed command
+for i in "${fuzzyFlatpakCommands[@]}"
+do
+    if [[ $1 == $i ]]
+    then
+        if [ $1 == "help" ]
+        then
+            echo "help"
+        elif [ $1 == "info" ]
+        then
+            echo "info"
+        elif [ $1 == "run" ]
+        then
+            echo "run"
+        elif [ $1 == "kill" ]
+        then
+            echo "kill"
+        fi
+    fi
+done
+
+# todo this can only be here if we can exit 0 in run
+echo "Command not recognized"
+exit 1
+
 #    if help
 #    help
 #    exit 0
