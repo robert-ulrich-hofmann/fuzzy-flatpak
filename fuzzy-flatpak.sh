@@ -126,4 +126,4 @@ fi
 #    exit 0
 #else
 #no allowed command
-#exit
+#exit 1
