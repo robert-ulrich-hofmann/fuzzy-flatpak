@@ -8,7 +8,7 @@ fuzzyFind()
 {
     FUZZY_FIND_RESULT=""
 
-    # -maxdepth 1 just on given level, don't go deeper (lot's of duplicates here)
+    # -maxdepth 1 just on given level, don't go deeper (lot's of duplicates)
     # -type d = directory
     # -iname ignores case as opposed to -name
     # -print -quit just prints first result and ends find
@@ -50,31 +50,17 @@ fuzzyRun()
     echo "fuzzyRun"
 }
 
-# TODO fuzzy-ps(): get name with fuzzy-find and look up in ps
-# todo nothing running
-# todo error not found and exit (always return result or exit)
-
-# todo interactive like rm -i
-# output echo what would be started and option user input to yes enter start / return / abort?
-# TODO instead of this display live preview per keystroke in input! :O
-
-# todo kill all but []?
-
-#if !flatpak
-#echo dependency
-#exit
 if [[ ! $(command -v flatpak) ]]
 then
-    echo "Something dependency here TODO"
+    echo "fuzzy-flatpak: Flatpak not found. You need to install flatpak for" \
+         "fuzzy-flatpak to work."
     exit 1
 fi
 
-#if !$1
-#no command
-#exit 1
 if [ ! "$1" ]
 then
-    echo "Something command here TODO"
+    echo "fuzzy-flatpak: You need to provide a command." \
+         "Run \"fuzzy-flatpak help\" for help."
     exit 1
 fi
 
@@ -123,5 +109,6 @@ do
     fi
 done
 
-echo "Command not recognized"
+echo "fuzzy-flatpak: Command not recognized." \
+     "Run \"fuzzy-flatpak help\" for help."
 exit 1
