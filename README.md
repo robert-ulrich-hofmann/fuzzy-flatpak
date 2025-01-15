@@ -1,6 +1,11 @@
+# WIP
+
 # fuzzy-flatpak
 
-description
+## Make some flatpak commands accept fuzzy names
+
+## Description
+
 reasoning
 feedback / contributions welcome?
 readme only dependency flatpak
