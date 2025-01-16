@@ -31,11 +31,10 @@ fuzzyFind()
 
     if [ -z "$FUZZY_FIND_RESULT" ]
     then
-        echo "fuzzy-flatpak/fuzzy-find(): Can not find this application"
+        echo "fuzzy-flatpak/fuzzy-find(): Can not find application \"$1\""
         exit 1
     else
         # remove from string anything-before-and-including-exactly(.var/app/)
-        echo "$FUZZY_FIND_RESULT"
         FUZZY_FIND_RESULT=${FUZZY_FIND_RESULT##*.var/app/}
         echo "fuzzy-flatpak/fuzzy-find(): Found $FUZZY_FIND_RESULT"
     fi
@@ -62,7 +61,7 @@ then
     exit 1
 fi
 
-# if command part of fuzzy-flatpak
+# command part of fuzzy-flatpak
 for i in "${fuzzyFlatpakCommands[@]}"
 do
     if [[ $1 == "$i" ]]
@@ -74,37 +73,34 @@ do
             exit 0
         elif [ "$1" == "info" ]
         then
-            # get the script arguments starting with "$2"
+            # pass the script arguments starting with "$2"
             checkIfNameProvided "${@:2}"
             fuzzyFind "$2"
             flatpak info "$FUZZY_FIND_RESULT"
             exit 0
         elif [ "$1" == "run" ]
         then
-            # get the script arguments starting with "$2"
+            # pass the script arguments starting with "$2"
             checkIfNameProvided "${@:2}"
             fuzzyFind "$2"
             flatpak run "$FUZZY_FIND_RESULT"
             exit 0
         elif [ "$1" == "kill" ]
-        #    if kill
-        #       if all
-        #       ps
-        #       kill[]
-        #    else
-        #    fuzzy-ps($2)
-        #    kill (if all: single kill & calls)
-        #    exit 0
         then
-            # if !#2 kill all
-            # else   kill X
-            echo "kill"
-            exit 0
+            if [[ ! $2 ]]
+            then
+                echo "kill all"
+                exit 0
+            else
+                fuzzyFind "$2"
+                flatpak kill "$FUZZY_FIND_RESULT"
+                exit 0
+            fi
         fi
     fi
 done
 
-# else command not part of fuzzy-flatpak
-echo "fuzzy-flatpak: Command not recognized." \
+# command not part of fuzzy-flatpak
+echo "fuzzy-flatpak: Command \"$1\" not recognized." \
      "Run \"fuzzy-flatpak help\" for help."
 exit 1
