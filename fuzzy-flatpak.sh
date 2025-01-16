@@ -31,20 +31,37 @@ fuzzyFind()
 
     if [ -z "$FUZZY_FIND_RESULT" ]
     then
-        echo "fuzzy-flatpak/fuzzy-find(): Can not find application \"$1\""
+        echo "fuzzy-flatpak/fuzzyFind(): Can not find application \"$1\"."
         exit 1
     else
         # remove from string anything-before-and-including-exactly(.var/app/)
         FUZZY_FIND_RESULT=${FUZZY_FIND_RESULT##*.var/app/}
-        echo "fuzzy-flatpak/fuzzy-find(): Found $FUZZY_FIND_RESULT"
+        echo "fuzzy-flatpak/fuzzyFind(): Found $FUZZY_FIND_RESULT"
     fi
 }
 
-getRunningProcesses()
+fuzzyPS()
 {
-    echo "getRunningProcesses"
-    # get all running processes as names
-    # return array
+    # substitue the left-most occurence of /\s/ (any whitespace character)
+    # with "" (nothing) and print only second ($0 all, $1 first, $2 second)
+    # parameter (which are separated by strings) of result
+    # input 123 456 com.domain.application org.gnome.Platform
+    # result 123456 com.domain.application org.gnome.Platform
+    # $2 com.domain.application
+    # flatpak ps gives results in lines, awk operates per line
+    FUZZY_PS_RESULT=""
+
+    FUZZY_PS_RESULT=$(flatpak ps | awk '{sub(/\s/,"");print $2}')
+
+    if [ -z "$FUZZY_PS_RESULT" ]
+    then
+        echo "fuzzy-flatpak/fuzzyPS(): No running flatpak processes."
+        exit 1
+    else
+        # todo bug one whitespace character before first result
+        echo -e "fuzzy-flatpak/fuzzyPS(): Found running processes:\n" \
+                "$FUZZY_PS_RESULT"
+    fi
 }
 
 if [[ ! $(command -v flatpak) ]]
@@ -89,7 +106,11 @@ do
         then
             if [[ ! $2 ]]
             then
-                echo "kill all"
+                fuzzyPS
+                for j in $FUZZY_PS_RESULT
+                do
+                    flatpak kill "$j"
+                done
                 exit 0
             else
                 fuzzyFind "$2"
