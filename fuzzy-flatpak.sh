@@ -2,7 +2,12 @@
 
 # fuzzy-flatpak: Make some flatpak commands accept fuzzy names
 
-fuzzyFlatpakCommands=("help" "-h" "--help" "info" "run" "kill")
+fuzzyFlatpakCommands=("help" "-h" "--help"
+                      "info"
+                      "run"
+                      "kill"
+                      "kill-all"
+)
 
 checkIfNameProvided()
 {
@@ -74,14 +79,14 @@ fuzzyHelp()
     echo -e "Usage:\n"\
             "  fuzzy-flatpak COMMAND NAME?\n"\
             "\n"\
-            "help     Display this help.\n"\
-            "info     Needs NAME. Fuzzy-search for NAME and display"\
-                      "\"flatpak info\" of the result.\n"\
-            "run      Needs NAME. Fuzzy-search for NAME and execute"\
-                      "\"flatpak run\" with the result.\n"\
-            "kill     If no NAME is provided, kill all running flatpak"\
-                      "processes. If NAME is provided, execute"\
-                      "\"flatpak kill\" with the result.\n"
+            "help, -h, --help   Display this help.\n"\
+            "info               Needs NAME. Fuzzy-search for NAME and display"\
+                                "\"flatpak info\" of the result.\n"\
+            "run                Needs NAME. Fuzzy-search for NAME and execute"\
+                                "\"flatpak run\" with the result.\n"\
+            "kill               Needs NAME. Fuzzy-search for NAME and execute"\
+                                "\"flatpak kill\" with the result.\n"\
+            "kill-all           Kill all running flatpak processes."
 }
 
 if [[ ! $(command -v flatpak) ]]
@@ -128,22 +133,22 @@ do
             exit 0
         elif [ "$1" == "kill" ]
         then
-            if [[ ! $2 ]]
-            then
-                fuzzyPS
+            # pass the script's arguments starting with "$2"
+            checkIfNameProvided "${@:2}"
+            fuzzyFind "$2"
+            flatpak kill "$FUZZY_FIND_RESULT"
 
-                for j in $FUZZY_PS_RESULT
-                do
-                    flatpak kill "$j"
-                done
+            exit 0
+        elif [ "$1" == "kill-all" ]
+        then
+            fuzzyPS
 
-                exit 0
-            else
-                fuzzyFind "$2"
-                flatpak kill "$FUZZY_FIND_RESULT"
+            for j in $FUZZY_PS_RESULT
+            do
+                flatpak kill "$j"
+            done
 
-                exit 0
-            fi
+            exit 0
         fi
     fi
 done
