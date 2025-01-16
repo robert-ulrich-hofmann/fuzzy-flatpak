@@ -2,7 +2,7 @@
 
 # fuzzy-flatpak: Make some flatpak commands accept fuzzy names
 
-fuzzyFlatpakCommands=("help" "info" "run" "kill")
+fuzzyFlatpakCommands=("help" "-h" "--help" "info" "run" "kill")
 
 checkIfNameProvided()
 {
@@ -10,6 +10,7 @@ checkIfNameProvided()
     then
         echo "fuzzy-flatpak: You need to provide a name." \
              "Run \"fuzzy-flatpak help\" for help."
+
         exit 1
     fi
 }
@@ -20,7 +21,7 @@ fuzzyFind()
 
     # -maxdepth 1 just on given level, don't go deeper (lot's of duplicates)
     # -type d = directory
-    # -iname ignores case as opposed to -name
+    # -iname ignores case (as opposed to -name)
     # -print -quit just prints first result and ends find
     FUZZY_FIND_RESULT=$(find "$HOME/.var/app" -maxdepth 1    \
                                               -type d        \
@@ -61,10 +62,26 @@ fuzzyPS()
 
         exit 1
     else
-        # todo bug one whitespace character before first result
+        # todo bug one whitespace character before new line (first result)
         echo -e "fuzzy-flatpak/fuzzyPS(): Found running processes:\n" \
                 "$FUZZY_PS_RESULT"
     fi
+}
+
+fuzzyHelp()
+{
+    # todo bug one whitespace character before every new line
+    echo -e "Usage:\n"\
+            "  fuzzy-flatpak COMMAND NAME?\n"\
+            "\n"\
+            "help     Display this help.\n"\
+            "info     Needs NAME. Fuzzy-search for NAME and display"\
+                      "\"flatpak info\" of the result.\n"\
+            "run      Needs NAME. Fuzzy-search for NAME and execute"\
+                      "\"flatpak run\" with the result.\n"\
+            "kill     If no NAME is provided, kill all running flatpak"\
+                      "processes. If NAME is provided, execute"\
+                      "\"flatpak kill\" with the result.\n"
 }
 
 if [[ ! $(command -v flatpak) ]]
@@ -88,10 +105,10 @@ for i in "${fuzzyFlatpakCommands[@]}"
 do
     if [[ $1 == "$i" ]]
     then
-        if [ "$1" == "help" ]
+        if [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]
         then
-            # todo
-            echo "help"
+            fuzzyHelp
+
             exit 0
         elif [ "$1" == "info" ]
         then
