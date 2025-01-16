@@ -4,6 +4,16 @@
 
 fuzzyFlatpakCommands=("help" "info" "run" "kill")
 
+checkIfNameProvided()
+{
+    if [[ ! $1 ]]
+    then
+        echo "fuzzy-flatpak: You need to provide a name." \
+             "Run \"fuzzy-flatpak help\" for help."
+        exit 1
+    fi
+}
+
 fuzzyFind()
 {
     FUZZY_FIND_RESULT=""
@@ -31,23 +41,11 @@ fuzzyFind()
     fi
 }
 
-checkApplicationRunning()
-{
-    echo "checkApplicationRunning"
-    # compare flatpak ps and $1
-    # return true 1 / false 0
-}
-
 getRunningProcesses()
 {
     echo "getRunningProcesses"
     # get all running processes as names
     # return array
-}
-
-fuzzyRun()
-{
-    echo "fuzzyRun"
 }
 
 if [[ ! $(command -v flatpak) ]]
@@ -64,32 +62,29 @@ then
     exit 1
 fi
 
-#if allowed command
+# if command part of fuzzy-flatpak
 for i in "${fuzzyFlatpakCommands[@]}"
 do
     if [[ $1 == "$i" ]]
     then
         if [ "$1" == "help" ]
         then
+            # todo
             echo "help"
             exit 0
         elif [ "$1" == "info" ]
         then
-            #    if !$2
-            #    no name
-            #    exit 1
-            echo "info"
+            # get the script arguments starting with "$2"
+            checkIfNameProvided "${@:2}"
+            fuzzyFind "$2"
+            flatpak info "$FUZZY_FIND_RESULT"
             exit 0
         elif [ "$1" == "run" ]
         then
-            #    if !$2
-            #    no name
-            #    exit 1
-            # todo fuzzyRun $2
-            echo "run"
-            # todo if ! $2 guard exit 1
+            # get the script arguments starting with "$2"
+            checkIfNameProvided "${@:2}"
             fuzzyFind "$2"
-            flatpak run "$FUZZY_FIND_RESULT" & # todo test this outside
+            flatpak run "$FUZZY_FIND_RESULT"
             exit 0
         elif [ "$1" == "kill" ]
         #    if kill
@@ -109,6 +104,7 @@ do
     fi
 done
 
+# else command not part of fuzzy-flatpak
 echo "fuzzy-flatpak: Command not recognized." \
      "Run \"fuzzy-flatpak help\" for help."
 exit 1
