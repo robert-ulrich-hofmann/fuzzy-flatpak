@@ -52,12 +52,9 @@ fuzzyPS()
 {
     FUZZY_PS_RESULT=""
 
-    # substitue the left-most occurence of /\s/ (any whitespace character)
+    # substitue the left-most occurence of \s (any whitespace character)
     # with "" (nothing) and print only second ($0 all, $1 first, $2 second)
     # parameter (which are separated by strings) of result
-    # input 123 456 com.domain.application org.kde.Platform
-    # result 123456 com.domain.application org.kde.Platform
-    # $2 com.domain.application
     # flatpak ps gives results in lines, awk operates per line
     FUZZY_PS_RESULT=$(flatpak ps | awk '{sub(/\s/,"");print $2}')
 
@@ -68,7 +65,7 @@ fuzzyPS()
         exit 1
     else
         # todo bug one whitespace character before new line (first result)
-        echo -e "fuzzy-flatpak/fuzzyPS(): Found running processes:\n" \
+        echo -e "fuzzy-flatpak/fuzzyPS(): Found running flatpak processes:\n" \
                 "$FUZZY_PS_RESULT"
     fi
 }
