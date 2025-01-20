@@ -7,6 +7,7 @@ fuzzyFlatpakCommands=("help" "-h" "--help"
                       "run"
                       "kill"
                       "kill-all"
+                      "update"
 )
 
 checkIfNameProvided()
@@ -144,6 +145,14 @@ do
             do
                 flatpak kill "$j"
             done
+
+            exit 0
+        elif [ "$1" == "update" ]
+        then
+            # pass the script's arguments starting with "$2"
+            checkIfNameProvided "${@:2}"
+            fuzzyFind "$2"
+            flatpak update "$FUZZY_FIND_RESULT"
 
             exit 0
         fi
