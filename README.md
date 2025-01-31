@@ -5,12 +5,15 @@
 This application enables the user to use certain flatpak commands without
 searching for / knowing / having to use the typical three-part identifier.
 Instead fuzzy-flatpak will "fuzzy search" for this identifier based on the
-given name.
+given input.
 
 ## Installation
-
 <!-- TODO  -->
 For now: Manual.
+
+You can always take the script and run with that.
+
+Installer nifty benefits.
 
 Upcomming: Installer!
 
@@ -31,8 +34,20 @@ check all exit codes again
 todo fuzzyFlatpak better?
 evaluate: print / printf instead of echo? why?
 
+Supported Commands
+
+help
+info
+run
+kill
+kill-all
+<!-- TODO -->
+update
+
 ## TODO backlog
 
+- make run and kill accept multiple and start with & to have one console output of a defined bundle
+- add update to fuzzy commands (can also accept one program)
 - make run and kill accept multiple programs? (run will create insane
 output) also: if multiple input fail all on one or per case?
 - reverse kill: kill all but [these]
