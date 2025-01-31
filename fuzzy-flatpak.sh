@@ -2,13 +2,19 @@
 
 # fuzzy-flatpak: Make some flatpak commands accept fuzzy names
 
-fuzzyFlatpakCommands=("help" "-h" "--help"
+FUZZY_FLATPAK_COMMANDS=("help" "-h" "--help"
                       "info"
                       "run"
                       "kill"
                       "kill-all"
                       "update"
 )
+
+FUZZY_NAMES=()
+
+FUZZY_OPTIONS=()
+
+FUZZY_FIND_RESULTS=()
 
 checkIfNameProvided()
 {
@@ -45,6 +51,8 @@ fuzzyFind()
         # remove from string anything-before-and-including-exactly(.var/app/)
         FUZZY_FIND_RESULT=${FUZZY_FIND_RESULT##*.var/app/}
 
+        FUZZY_FIND_RESULTS+=("$FUZZY_FIND_RESULT")
+
         echo "fuzzy-flatpak/fuzzyFind(): Found $FUZZY_FIND_RESULT"
     fi
 }
@@ -78,8 +86,8 @@ fuzzyHelp()
             "  fuzzy-flatpak COMMAND NAME?\n"\
             "\n"\
             "help, -h, --help   Display this help.\n"\
-            "info               Needs NAME. Fuzzy-search for NAME and display"\
-                                "\"flatpak info\" of the result.\n"\
+            "info               Needs NAME. Fuzzy-search for NAME and execute"\
+                                "\"flatpak info\" with the result.\n"\
             "run                Needs NAME. Fuzzy-search for NAME and execute"\
                                 "\"flatpak run\" with the result.\n"\
             "kill               Needs NAME. Fuzzy-search for NAME and execute"\
@@ -104,7 +112,7 @@ then
 fi
 
 # command is part of fuzzy-flatpak
-for i in "${fuzzyFlatpakCommands[@]}"
+for i in "${FUZZY_FLATPAK_COMMANDS[@]}"
 do
     if [[ $1 == "$i" ]]
     then

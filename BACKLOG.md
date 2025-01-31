@@ -20,6 +20,7 @@ another project?
 - get autocomplete on commands from flatpak or do your own?
 - do autocomplete on names
 - get autocomplete on options from flatpak or do your own?
+- getopts
 
 - full flatpak replacement and installer with alias, optional with --set-alias user defined?
 - ffpk?
