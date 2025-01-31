@@ -66,3 +66,28 @@ another project?
 -     add -i interactive mode
 -     add detached mode (always &)
 -     maybe all this in a .config?
+
+## steps
+
+- clean up first version
+- final readme v0.1
+- release
+
+- add options
+- add command / options detection
+- add flatpak commands without name / changes
+- add flatpak commands with fuzzy name changes
+- add new commands
+- v0.2
+
+- add multi name to fuzzy enabled commands
+- v0.3
+
+- add setup
+- add man?
+- add docs
+- v1.0
+
+- seal master
+- backlog -> issues
+- develop
