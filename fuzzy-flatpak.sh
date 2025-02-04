@@ -53,30 +53,25 @@ fuzzyFind()
             # add result to array of results
             FUZZY_FIND_RESULTS+=("$FUZZY_FIND_RESULT")
 
-            echo "fuzzy-flatpak/fuzzyFind(): \"$i\" found $FUZZY_FIND_RESULT"
+            echo "fuzzy-flatpak/fuzzyFind(): \"$i\" matches $FUZZY_FIND_RESULT"
         fi
     done
 }
 
 fuzzyPS()
 {
-    FUZZY_PS_RESULT=""
+    FUZZY_PS_RESULTS=()
 
-    # substitue the left-most occurence of \s (any whitespace character)
-    # with "" (nothing) and print only second ($0 all, $1 first, $2 second)
-    # parameter (which are separated by whitespaces) of result
-    # flatpak ps gives results in lines, awk operates per line
-    FUZZY_PS_RESULT=$(flatpak ps | awk '{sub(/\s/,"");print $2}')
+    # shellcheck disable=SC2207
+    # array=split(output of awk at whitespaces)
+    FUZZY_PS_RESULTS=($(flatpak ps | awk '{for (i=3; i<=NF; i+=4) print $i}'))
 
-    if [ -z "$FUZZY_PS_RESULT" ]
+    # "$array[*]" concatenates all elements to one string
+    if [ -z "${FUZZY_PS_RESULTS[*]}" ]
     then
         echo "fuzzy-flatpak/fuzzyPS(): No running flatpak processes."
 
         exit 1
-    else
-        # todo bug one whitespace character before new line (first result)
-        echo -e "fuzzy-flatpak/fuzzyPS(): Found running flatpak processes:\n" \
-                "$FUZZY_PS_RESULT"
     fi
 }
 
@@ -153,8 +148,9 @@ do
         elif [ "$1" == "kill-all" ]
         then
             fuzzyPS
+            # todo removeDuplicates(FUZZY_PS_RESULTS)
 
-            for j in $FUZZY_PS_RESULT
+            for j in "${FUZZY_PS_RESULTS[@]}"
             do
                 flatpak kill "$j"
             done
