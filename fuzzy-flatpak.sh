@@ -143,7 +143,8 @@ do
             # pass the script's arguments starting with "$2"
             checkIfNameProvided "${@:2}"
             fuzzyFind "$2"
-            flatpak kill "$FUZZY_FIND_RESULT"
+
+            flatpak kill "${FUZZY_FIND_RESULTS[0]}"
 
             exit 0
         elif [ "$1" == "kill-all" ]
