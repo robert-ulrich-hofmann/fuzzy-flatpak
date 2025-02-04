@@ -163,7 +163,9 @@ do
             # pass the script's arguments starting with "$2"
             checkIfNameProvided "${@:2}"
             fuzzyFind "$2"
-            flatpak update "$FUZZY_FIND_RESULT"
+
+            # todo: update 1 or update 1..n ?
+            flatpak update "${FUZZY_FIND_RESULTS[0]}"
 
             exit 0
         fi
