@@ -70,7 +70,7 @@ fuzzyPS()
     # remove duplicates
     FUZZY_PS_RESULTS=($(for i in "${FUZZY_PS_RESULTS[@]}"; do echo "$i"; done | sort -u))
 
-    # "$array[*]" concatenates all elements to one string
+    # "${array[*]}" concatenates all elements to one string
     if [ -z "${FUZZY_PS_RESULTS[*]}" ]
     then
         echo "fuzzy-flatpak/fuzzyPS(): No running flatpak processes."
