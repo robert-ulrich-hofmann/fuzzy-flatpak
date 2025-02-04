@@ -66,6 +66,10 @@ fuzzyPS()
     # array=split(output of awk at whitespaces)
     FUZZY_PS_RESULTS=($(flatpak ps | awk '{for (i=3; i<=NF; i+=4) print $i}'))
 
+    # shellcheck disable=SC2207
+    # remove duplicates
+    FUZZY_PS_RESULTS=($(for i in "${FUZZY_PS_RESULTS[@]}"; do echo "$i"; done | sort -u))
+
     # "$array[*]" concatenates all elements to one string
     if [ -z "${FUZZY_PS_RESULTS[*]}" ]
     then
@@ -150,7 +154,6 @@ do
         elif [ "$1" == "kill-all" ]
         then
             fuzzyPS
-            # todo removeDuplicates(FUZZY_PS_RESULTS)
 
             for j in "${FUZZY_PS_RESULTS[@]}"
             do
