@@ -3,18 +3,12 @@
 # fuzzy-flatpak: Make some flatpak commands accept fuzzy names
 
 FUZZY_FLATPAK_COMMANDS=("help" "-h" "--help"
-                      "info"
-                      "run"
-                      "kill"
-                      "kill-all"
-                      "update"
+                        "info"
+                        "run"
+                        "kill"
+                        "kill-all"
+                        "update"
 )
-
-FUZZY_NAMES=()
-
-FUZZY_OPTIONS=()
-
-FUZZY_FIND_RESULTS=()
 
 checkIfNameProvided()
 {
@@ -29,32 +23,39 @@ checkIfNameProvided()
 
 fuzzyFind()
 {
-    FUZZY_FIND_RESULT=""
+    FUZZY_FIND_RESULTS=()
 
-    # -maxdepth 1 just on given level, don't go deeper (lot's of duplicates)
-    # -type d = directory
-    # -iname ignores case (as opposed to -name)
-    # -print -quit just prints first result and ends find
-    FUZZY_FIND_RESULT=$(find "$HOME/.var/app" -maxdepth 1    \
-                                              -type d        \
-                                              -iname "*$1*"  \
-                                              -print         \
-                                              -quit          \
-    )
+    for i in "${@:1}"
+    do
+        FUZZY_FIND_RESULT=""
 
-    if [ -z "$FUZZY_FIND_RESULT" ]
-    then
-        echo "fuzzy-flatpak/fuzzyFind(): Can not find application \"$1\"."
+        # -maxdepth 1 just on given level, don't go deeper (lot's of duplicates)
+        # -type d = directory
+        # -iname ignores case (as opposed to -name)
+        # -print -quit prints just first result and then ends find
+        FUZZY_FIND_RESULT=$(find "$HOME/.var/app" -maxdepth 1    \
+                                                  -type d        \
+                                                  -iname "*$i*"  \
+                                                  -print         \
+                                                  -quit          \
+        )
 
-        exit 1
-    else
-        # remove from string anything-before-and-including-exactly(.var/app/)
-        FUZZY_FIND_RESULT=${FUZZY_FIND_RESULT##*.var/app/}
+        if [ -z "$FUZZY_FIND_RESULT" ]
+        then
+            echo "fuzzy-flatpak/fuzzyFind(): Can not find application \"$i\"."
 
-        FUZZY_FIND_RESULTS+=("$FUZZY_FIND_RESULT")
+            exit 1
+        else
+            # remove from string anything before and including exactly
+            # ".var/app/""
+            FUZZY_FIND_RESULT=${FUZZY_FIND_RESULT##*.var/app/}
 
-        echo "fuzzy-flatpak/fuzzyFind(): Found $FUZZY_FIND_RESULT"
-    fi
+            # add result to array of results
+            FUZZY_FIND_RESULTS+=("$FUZZY_FIND_RESULT")
+
+            echo "fuzzy-flatpak/fuzzyFind(): \"$i\" found $FUZZY_FIND_RESULT"
+        fi
+    done
 }
 
 fuzzyPS()
@@ -63,7 +64,7 @@ fuzzyPS()
 
     # substitue the left-most occurence of \s (any whitespace character)
     # with "" (nothing) and print only second ($0 all, $1 first, $2 second)
-    # parameter (which are separated by strings) of result
+    # parameter (which are separated by whitespaces) of result
     # flatpak ps gives results in lines, awk operates per line
     FUZZY_PS_RESULT=$(flatpak ps | awk '{sub(/\s/,"");print $2}')
 
@@ -133,8 +134,12 @@ do
         then
             # pass the script's arguments starting with "$2"
             checkIfNameProvided "${@:2}"
-            fuzzyFind "$2"
-            flatpak run "$FUZZY_FIND_RESULT"
+            fuzzyFind "${@:2}"
+
+            for j in "${FUZZY_FIND_RESULTS[@]}"
+            do
+                flatpak run "$j" &
+            done
 
             exit 0
         elif [ "$1" == "kill" ]
