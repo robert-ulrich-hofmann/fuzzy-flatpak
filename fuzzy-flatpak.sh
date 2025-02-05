@@ -82,6 +82,7 @@ fuzzyPS()
 fuzzyHelp()
 {
     # todo bug one whitespace character before every new line
+    # todo update no kill-all, kill / -all, update
     echo -e "Usage:\n"\
             "  fuzzy-flatpak COMMAND NAME?\n"\
             "\n"\
@@ -144,21 +145,24 @@ do
             exit 0
         elif [ "$1" == "kill" ]
         then
+            # kill -a / kill -all
+            if [ "$2" == "-a" ] || [ "$2" == "--all" ]
+            then
+                fuzzyPS
+
+                for j in "${FUZZY_PS_RESULTS[@]}"
+                do
+                    flatpak kill "$j"
+                done
+
+                exit 0
+            fi
+
             # pass the script's arguments starting with "$2"
             checkIfNameProvided "${@:2}"
             fuzzyFind "$2"
 
             flatpak kill "${FUZZY_FIND_RESULTS[0]}"
-
-            exit 0
-        elif [ "$1" == "kill-all" ]
-        then
-            fuzzyPS
-
-            for j in "${FUZZY_PS_RESULTS[@]}"
-            do
-                flatpak kill "$j"
-            done
 
             exit 0
         elif [ "$1" == "update" ]
