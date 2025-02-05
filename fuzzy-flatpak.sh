@@ -14,7 +14,7 @@ checkIfNameProvided()
 {
     if [[ ! $1 ]]
     then
-        echo "fuzzy-flatpak: You need to provide a name." \
+        echo "fuzzy-flatpak: You need to provide at least one name." \
              "Run \"fuzzy-flatpak help\" for help."
 
         exit 1
@@ -152,7 +152,7 @@ do
 
                 for j in "${FUZZY_PS_RESULTS[@]}"
                 do
-                    flatpak kill "$j"
+                    flatpak kill "$j" &
                 done
 
                 exit 0
@@ -162,7 +162,10 @@ do
             checkIfNameProvided "${@:2}"
             fuzzyFind "$2"
 
-            flatpak kill "${FUZZY_FIND_RESULTS[0]}"
+            for j in "${FUZZY_FIND_RESULTS[@]}"
+            do
+                flatpak kill "$j" &
+            done
 
             exit 0
         elif [ "$1" == "update" ]
