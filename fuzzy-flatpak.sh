@@ -6,7 +6,6 @@ FUZZY_FLATPAK_COMMANDS=("help" "-h" "--help"
                         "info"
                         "run"
                         "kill"
-                        "kill-all"
                         "update"
 )
 
@@ -82,7 +81,6 @@ fuzzyPS()
 fuzzyHelp()
 {
     # todo bug one whitespace character before every new line
-    # todo update no kill-all, kill / -all, update
     echo -e "Usage:\n"\
             "  fuzzy-flatpak COMMAND NAME?\n"\
             "\n"\
@@ -91,9 +89,15 @@ fuzzyHelp()
                                 "\"flatpak info\" with the result.\n"\
             "run                Needs NAME. Fuzzy-search for NAME and execute"\
                                 "\"flatpak run\" with the result.\n"\
-            "kill               Needs NAME. Fuzzy-search for NAME and execute"\
+            "kill (-a, --all)   If called with option -a or --all, kill all"\
+                                "running flatpak processes. "\
+                                "If NAME is provided,"\
+                                "fuzzy-search for NAME and execute"\
                                 "\"flatpak kill\" with the result.\n"\
-            "kill-all           Kill all running flatpak processes."
+            "update             If no NAME is provided,"\
+                                "execute \"flatpak update\". If NAME is"\
+                                "provided, fuzzy-search for NAME and execute"\
+                                "\"flatpak update\" with the result."
 }
 
 if [[ ! $(command -v flatpak) ]]
@@ -133,7 +137,6 @@ do
             exit 0
         elif [ "$1" == "run" ]
         then
-            # pass the script's arguments starting with "$2"
             checkIfNameProvided "${@:2}"
             fuzzyFind "${@:2}"
 
@@ -158,7 +161,6 @@ do
                 exit 0
             fi
 
-            # pass the script's arguments starting with "$2"
             checkIfNameProvided "${@:2}"
             fuzzyFind "$2"
 
@@ -180,7 +182,6 @@ do
 
             fuzzyFind "$2"
 
-            # todo: update 1 or update 1..n ?
             flatpak update "${FUZZY_FIND_RESULTS[0]}"
 
             exit 0
