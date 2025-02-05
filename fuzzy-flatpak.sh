@@ -170,8 +170,14 @@ do
             exit 0
         elif [ "$1" == "update" ]
         then
-            # pass the script's arguments starting with "$2"
-            checkIfNameProvided "${@:2}"
+            # update all
+            if [[ ! $2 ]]
+            then
+                flatpak update
+
+                exit 0
+            fi
+
             fuzzyFind "$2"
 
             # todo: update 1 or update 1..n ?
