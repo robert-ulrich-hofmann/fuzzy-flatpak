@@ -9,6 +9,28 @@ FUZZY_FLATPAK_COMMANDS=("help" "-h" "--help"
                         "update"
 )
 
+help()
+{
+    # todo bug one whitespace character before every new line
+    echo -e "Usage:\n"\
+            "  fuzzy-flatpak COMMAND NAME?\n"\
+            "\n"\
+            "help, -h, --help   Display this help.\n"\
+            "info               Needs NAME. Fuzzy-search for NAME and execute"\
+                                "\"flatpak info\" with the result.\n"\
+            "run                Needs NAME. Fuzzy-search for NAME and execute"\
+                                "\"flatpak run\" with the result.\n"\
+            "kill (-a, --all)   If called with option -a or --all, kill all"\
+                                "running flatpak processes. "\
+                                "If NAME is provided,"\
+                                "fuzzy-search for NAME and execute"\
+                                "\"flatpak kill\" with the result.\n"\
+            "update             If no NAME is provided,"\
+                                "execute \"flatpak update\". If NAME is"\
+                                "provided, fuzzy-search for NAME and execute"\
+                                "\"flatpak update\" with the result."
+}
+
 checkIfNameProvided()
 {
     if [[ ! $1 ]]
@@ -78,28 +100,7 @@ fuzzyPS()
     fi
 }
 
-fuzzyHelp()
-{
-    # todo bug one whitespace character before every new line
-    echo -e "Usage:\n"\
-            "  fuzzy-flatpak COMMAND NAME?\n"\
-            "\n"\
-            "help, -h, --help   Display this help.\n"\
-            "info               Needs NAME. Fuzzy-search for NAME and execute"\
-                                "\"flatpak info\" with the result.\n"\
-            "run                Needs NAME. Fuzzy-search for NAME and execute"\
-                                "\"flatpak run\" with the result.\n"\
-            "kill (-a, --all)   If called with option -a or --all, kill all"\
-                                "running flatpak processes. "\
-                                "If NAME is provided,"\
-                                "fuzzy-search for NAME and execute"\
-                                "\"flatpak kill\" with the result.\n"\
-            "update             If no NAME is provided,"\
-                                "execute \"flatpak update\". If NAME is"\
-                                "provided, fuzzy-search for NAME and execute"\
-                                "\"flatpak update\" with the result."
-}
-
+# program start
 if [[ ! $(command -v flatpak) ]]
 then
     echo "fuzzy-flatpak: Flatpak not found. You need to install flatpak for" \
@@ -123,7 +124,7 @@ do
     then
         if [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ]
         then
-            fuzzyHelp
+            help
 
             exit 0
         elif [ "$1" == "info" ]
@@ -161,6 +162,7 @@ do
                 exit 0
             fi
 
+            # kill 1..n
             checkIfNameProvided "${@:2}"
             fuzzyFind "$2"
 
@@ -180,6 +182,7 @@ do
                 exit 0
             fi
 
+            # update 1
             fuzzyFind "$2"
 
             flatpak update "${FUZZY_FIND_RESULTS[0]}"
