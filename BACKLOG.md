@@ -8,6 +8,8 @@
 - install script user
 - man page
 
+- confirm delete / show results first 
+
 - color with ansi escape codes (maybe close them again)
 - but listen to NO_COLOR
 
